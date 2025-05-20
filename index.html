@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CarShare - Ride Sharing App</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script>
+        // Function to validate numeric input
+        function isNumberKey(evt) {
+            var charCode = (evt.which) ? evt.which : evt.keyCode;
+            // Allow only numbers and decimal point
+            if (charCode > 31 && (charCode < 48 || charCode > 57) && charCode !== 46) {
+                return false;
+            }
+            // Allow only one decimal point
+            if (charCode === 46 && evt.target.value.includes('.')) {
+                return false;
+            }
+            return true;
+        }
+    </script>
+</head>
+<body>
+    <div id="app">
+        <div id="login-container" class="container">
+            <h1>CarShare Login</h1>
+            <div class="form-group">
+                <label for="username">Username:</label>
+                <input type="text" id="username" class="form-control" placeholder="Enter username">
+            </div>
+            <div class="form-group">
+                <label for="password">Password:</label>
+                <input type="password" id="password" class="form-control" placeholder="Enter password">
+            </div>
+            <button id="login-btn" class="btn">Login</button>
+            <p>Don't have an account? <button id="show-register-btn" class="btn-link">Register</button></p>
+            <p id="login-message"></p>
+        </div>
+
+        <div id="register-container" class="container hidden">
+            <h1>CarShare Registration</h1>
+            <div class="form-group">
+                <label for="reg-username">Username:</label>
+                <input type="text" id="reg-username" class="form-control" placeholder="Enter username">
+            </div>
+            <div class="form-group">
+                <label for="reg-password">Password:</label>
+                <input type="password" id="reg-password" class="form-control" placeholder="Enter password">
+            </div>
+            <div class="form-group">
+                <label for="reg-name">Full Name:</label>
+                <input type="text" id="reg-name" class="form-control" placeholder="Enter your full name">
+            </div>
+            <button id="register-btn" class="btn">Register</button>
+            <p>Already have an account? <button id="show-login-btn" class="btn-link">Login</button></p>
+            <p id="register-message"></p>
+        </div>
+
+        <div id="main-container" class="container hidden">
+            <header>
+                <h1>CarShare App</h1>
+                <div class="user-info">
+                    <span id="current-user"></span>
+                    <button id="view-db-btn" class="btn-small">View Database</button>
+                    <button id="logout-btn" class="btn-small">Logout</button>
+                </div>
+            </header>
+            
+            <div id="calendar-container">
+                <div class="calendar-header">
+                    <button id="prev-month" class="btn-small">Previous</button>
+                    <h2 id="month-year"></h2>
+                    <button id="next-month" class="btn-small">Next</button>
+                </div>
+                <div class="weekdays">
+                    <div>Sun</div>
+                    <div>Mon</div>
+                    <div>Tue</div>
+                    <div>Wed</div>
+                    <div>Thu</div>
+                    <div>Fri</div>
+                    <div>Sat</div>
+                </div>
+                <div id="calendar-days" class="days"></div>
+            </div>
+        </div>
+
+        <div id="db-viewer-container" class="container hidden">
+            <header>
+                <h1>Database Viewer</h1>
+                <div class="user-info">
+                    <button id="back-to-app-btn" class="btn-small">Back to App</button>
+                </div>
+            </header>
+            
+            <div class="tabs">
+                <button class="tab-btn active" data-tab="users-tab">Users</button>
+                <button class="tab-btn" data-tab="trips-tab">Trips</button>
+            </div>
+            
+            <div id="users-tab" class="tab-content">
+                <h2>Users</h2>
+                <div class="table-container">
+                    <table id="users-table">
+                        <thead>
+                            <tr>
+                                <th>Username</th>
+                                <th>Name</th>
+                            </tr>
+                        </thead>
+                        <tbody id="users-table-body">
+                            <!-- User data will be populated here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <div id="trips-tab" class="tab-content hidden">
+                <h2>Trips</h2>
+                <div class="table-container">
+                    <table id="trips-table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Driver</th>
+                                <th>Paid By</th>
+                                <th>Fare</th>
+                                <th>Participants</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="trips-table-body">
+                            <!-- Trip data will be populated here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div id="trip-modal" class="modal hidden">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h2 id="trip-date"></h2>
+                
+                <div id="trip-list" class="hidden">
+                    <h3>Trips for this date</h3>
+                    <div id="trip-list-container">
+                        <!-- Trip list will be populated here -->
+                    </div>
+                    
+                    <button id="add-trip-btn" class="btn">Add New Trip</button>
+                </div>
+                
+                <div id="trip-details" class="hidden">
+                    <h3>Trip Details</h3>
+                    <p><strong>Driver:</strong> <span id="trip-driver"></span></p>
+                    <p><strong>Direction:</strong> <span id="trip-direction"></span></p>
+                    <p><strong>Fare:</strong> $<span id="trip-fare"></span></p>
+                    <p><strong>Paid By:</strong> <span id="trip-payer"></span></p>
+                    
+                    <h3>Participants</h3>
+                    <ul id="trip-participants"></ul>
+                    
+                    <h3>Bill Details</h3>
+                    <ul id="trip-bill-details"></ul>
+                    
+                    <div class="button-group">
+                        <button id="back-to-list-btn" class="btn">Back to List</button>
+                        <button id="delete-trip-btn" class="btn-danger">Delete Trip</button>
+                    </div>
+                </div>
+                
+                <div id="new-trip-form">
+                    <h3>Create New Trip</h3>
+                    
+                    <div class="form-group">
+                        <label for="direction-select">Direction:</label>
+                        <select id="direction-select" class="form-control">
+                            <option value="going">Going</option>
+                            <option value="coming">Coming Back</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="fare-input">Fare ($):</label>
+                        <input type="number" id="fare-input" class="form-control" placeholder="Enter fare amount" min="0" step="0.01" onkeypress="return isNumberKey(event)">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="payer-select">Paid By:</label>
+                        <select id="payer-select" class="form-control">
+                            <!-- Options will be populated dynamically -->
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Participants:</label>
+                        <div id="participants-checkboxes"></div>
+                        <button id="add-participant-btn" class="btn-small">Add New Participant</button>
+                    </div>
+                    
+                    <!-- Add Participant Form -->
+                    <div id="add-participant-form" class="hidden">
+                        <h4>Add New Participant</h4>
+                        <div class="form-group">
+                            <label for="new-participant-username">Username:</label>
+                            <input type="text" id="new-participant-username" class="form-control" placeholder="Enter username">
+                        </div>
+                        <div class="form-group">
+                            <label for="new-participant-password">Password:</label>
+                            <input type="password" id="new-participant-password" class="form-control" placeholder="Enter password">
+                        </div>
+                        <div class="form-group">
+                            <label for="new-participant-name">Full Name:</label>
+                            <input type="text" id="new-participant-name" class="form-control" placeholder="Enter full name">
+                        </div>
+                        <div class="button-group">
+                            <button id="save-participant-btn" class="btn-small">Save Participant</button>
+                            <button id="cancel-participant-btn" class="btn-small btn-secondary">Cancel</button>
+                        </div>
+                    </div>
+                    
+                    <div class="button-group">
+                        <button id="save-trip-btn" class="btn">Save Trip</button>
+                        <button id="cancel-trip-btn" class="btn-secondary">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="js/data.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/calendar.js"></script>
+    <script src="js/trips.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

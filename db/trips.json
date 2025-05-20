@@ -1,0 +1,19 @@
+[
+  {
+    "date": "2025-05-19",
+    "direction": "going",
+    "fare": 123,
+    "payer": {
+      "username": "admin",
+      "name": "Admin User"
+    },
+    "participants": [
+      {
+        "username": "admin",
+        "name": "Admin User",
+        "attended": true
+      }
+    ],
+    "id": "1747675235569"
+  }
+]
